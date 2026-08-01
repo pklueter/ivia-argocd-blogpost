@@ -31,17 +31,17 @@ spec:
                 path: am-user.oc
       containers:
         - name: ivd
-          image: icr.io/ivd/verify-directory-server:10.0.4.0
+          image: icr.io/isvd/verify-directory-server:10.0.4.0
           ports:
             - containerPort: 9389
             - containerPort: 9636
           env:
             - name: YAML_CONFIG_FILE
-              value: /var/ivd/config/config.yaml
+              value: /var/isvd/config/config.yaml
           volumeMounts:
-            - mountPath: /var/ivd/config
+            - mountPath: /var/isvd/config
               name: config-volume
-            - mountPath: /var/ivd/data
+            - mountPath: /var/isvd/data
               name: data-volume
             - mountPath: /volume/schemas
               name: ldap-schemas
