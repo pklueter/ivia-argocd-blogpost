@@ -1,3 +1,9 @@
-clients:
-  - 'configmap:op-clients/client1.yml'
-  - 'configmap:op-clients/client2.yml'
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: oidc-clients
+data:
+  clients.yml: |
+    clients:
+      - 'configmap:op-clients/client1.yml'
+      - 'configmap:op-clients/client2.yml'
