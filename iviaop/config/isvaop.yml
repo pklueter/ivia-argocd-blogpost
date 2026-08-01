@@ -1,11 +1,8 @@
 version: 26.03
 server:
-  activation_code: "your-activation-code"
+  activation_code: 'your-activation-code'
   ssl:
-    key: "ks:server_keys/server_key"
-    certificate: "ks:server_keys/server_cert"
-  pages:
-    type: zip
-    content: "configmap:op-templates/templates.zip"
+    key: 'ks:server_keys/server_key'
+    certificate: 'ks:server_keys/server_cert'
 logging:
   level: info

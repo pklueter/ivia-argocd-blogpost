@@ -47,11 +47,6 @@ kubectl create configmap op-access-policies \
   --from-file=./iviaop/config/accessPolicies \
   --dry-run=client -o yaml > "${base_output_dir}/op-ap.yaml"
 
-echo "    op-templates..."
-kubectl create configmap op-templates \
-  --from-file=./iviaop/config/templates.zip \
-  --dry-run=client -o yaml > "${base_output_dir}/op-templates.yaml"
-
 # -------------------------------------------------------
 # Stage-specific ConfigMaps (overlay for ${STAGE})
 # -------------------------------------------------------

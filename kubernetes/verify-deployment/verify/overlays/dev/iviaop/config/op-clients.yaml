@@ -1,53 +1,33 @@
 apiVersion: v1
 data:
-  ivia-client.yml: |
-    client_name: IVIA Client
-    client_id: ivia-client
-    client_secret: "changeme"
-    enabled: true
-    token_endpoint_auth_method: default
   client1.yml: |
-    client_id: client1
-    client_secret: "changeme"
-    client_name: Client 1
-    enabled: true
-    grant_types:
+    client_id: client1 # Client identifier
+    client_secret: 'secret:clients/client1'
+    client_name: Client 1 # Name of the client.
+    enabled: true # Set to `true` to enable this client
+    grant_types: # Grant type that the client is allowed to use at the token endpoint.
       - authorization_code
       - urn:openid:params
-    response_types:
+    response_types: # Response type that the client is allowed to use at the authorization endpoint.
       - code
-    redirect_uris:
-      - https://rp.yourdomain.com/callback
-    token_endpoint_auth_method: default
+    redirect_uris: # Redirection URI strings for use in redirect-based flows such as the authorization code and implicit flows.
+      - https://client1.yourdomain.com
+    token_endpoint_auth_method: default # Requested authentication method for the backend endpoints (token, introspect, revoke).
   client2.yml: |
-    client_id: oidcrp
-    client_secret: "changeme"
-    client_name: OIDC-RP
-    enabled: true
-    grant_types:
+    client_id: oidcrp # Client identifier
+    client_secret: 'secret:clients/client2' # xNQd0xzXNwI55M9w8KYq
+    client_name: OIDC-RP # Name of the client.
+    enabled: true # Set to `true` to enable this client
+    grant_types: # Grant type that the client is allowed to use at the token endpoint.
       - authorization_code
       - urn:openid:params
-    response_types:
-      - code
-    redirect_uris:
-      - https://rp.yourdomain.com/login
-    token_endpoint_auth_method: default
-  am-ui.yml: |
-    client_name: AM UI
-    client_id: am-ui
-    client_secret: "changeme"
-    enabled: true
-    grant_types:
-      - authorization_code
-      - urn:openid:params
-      - implicit
-    response_types:
-      - code
+    response_types: # Response type that the client is allowed to use at the authorization endpoint.
       - token id_token
-    redirect_uris:
-      - https://ui.yourdomain.com/api/auth/callback/ivia
-      - http://localhost:3000/api/auth/callback/ivia
-    token_endpoint_auth_method: default
+      - code
+    redirect_uris: # Redirection URI strings for use in redirect-based flows such as the authorization code and implicit flows.
+      - https://client2.yourdomain.com/login
+    token_endpoint_auth_method: default # Requested authentication method for the backend endpoints (token, introspect, revoke).
 kind: ConfigMap
 metadata:
+  creationTimestamp: null
   name: op-clients

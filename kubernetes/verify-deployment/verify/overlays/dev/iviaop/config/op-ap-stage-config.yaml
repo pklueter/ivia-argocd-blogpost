@@ -1,10 +1,8 @@
 apiVersion: v1
 data:
   config.js: |
-    const nameSpace = "urn:ibm:security:authentication:asf:";
-    const loginPolicyName = "login";
-    const postSSOPolicyName = "postSSO";
-    const hostname = "www.yourdomain.com";
+    const hostname = 'www.yourdomain.com';
 kind: ConfigMap
 metadata:
+  creationTimestamp: null
   name: ap-stage-config

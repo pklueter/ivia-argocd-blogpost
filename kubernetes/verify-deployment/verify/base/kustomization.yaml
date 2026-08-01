@@ -24,4 +24,3 @@ resources:
   - iviaop/config/op-config.yaml
   - iviaop/config/op-mr.yaml
   - iviaop/config/op-ap.yaml
-  - iviaop/config/op-templates.yaml

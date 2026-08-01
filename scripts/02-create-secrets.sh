@@ -74,8 +74,8 @@ kubectl create secret generic op-keystores \
 # -------------------------------------------------------
 echo "==> Creating secret: op..."
 kubectl create secret generic op \
-  --from-literal=db_password="${OP_DB_PASSWORD}" \
-  --from-literal=ldap_password="${OP_LDAP_PASSWORD}" \
+  --from-literal=db_password="${PSQL_PWD}" \
+  --from-literal=ldap_password="${IVD_ADMIN_PWD}" \
   -n "${NS}" \
   --dry-run=client -o yaml | kubectl apply -f -
 

@@ -29,4 +29,5 @@ data:
     }
 kind: ConfigMap
 metadata:
+  creationTimestamp: null
   name: op-mapping-rules

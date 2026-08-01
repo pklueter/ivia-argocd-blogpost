@@ -9,4 +9,5 @@ data:
     context.setDecision(Decision.allow());
 kind: ConfigMap
 metadata:
+  creationTimestamp: null
   name: op-access-policies
