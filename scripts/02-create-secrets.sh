@@ -49,12 +49,12 @@ kubectl create secret generic configreader \
   --dry-run=client -o yaml | kubectl apply -f -
 
 # -------------------------------------------------------
-# PostgreSQL — password + TLS certificate
+# PostgreSQL — password + TLS certificate + private key
 # -------------------------------------------------------
 echo "==> Creating secret: postgresql-keys..."
 kubectl create secret generic postgresql-keys \
   --from-literal=password="${PSQL_PWD}" \
-  --from-file=server.crt=./postgresql/keys/server.crt \
+  --from-file=server.crt=./postgresql/keys/server.pem \
   -n "${NS}" \
   --dry-run=client -o yaml | kubectl apply -f -
 

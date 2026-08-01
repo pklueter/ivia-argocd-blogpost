@@ -29,10 +29,12 @@ echo "==> Generating PostgreSQL TLS certificate..."
 mkdir -p ./postgresql/keys
 openssl req -x509 -newkey rsa:2048 -nodes \
   -keyout ./postgresql/keys/server.key \
-  -out    ./postgresql/keys/server.crt \
+  -out ./postgresql/keys/server.crt \
   -days 365 \
   -subj "/CN=db.${NAMESPACE}.svc.cluster.local/O=${NAMESPACE}"
-echo "    -> ./postgresql/keys/server.crt"
+
+cat ./postgresql/keys/server.key ./postgresql/keys/server.crt > ./postgresql/keys/server.pem
+echo "    -> ./postgresql/keys/server.pem (combined key + cert)"
 
 # -------------------------------------------------------
 # OIDC Provider (iviaop) — JWT signing key + HTTPS keystore
@@ -45,7 +47,7 @@ echo "    -> ./iviaop/secrets/jwtsigningkey.pem"
 echo "==> Generating iviaop HTTPS TLS certificate..."
 openssl req -x509 -newkey rsa:2048 -nodes \
   -keyout ./iviaop/secrets/https/personal/server_key.pem \
-  -out    ./iviaop/secrets/https/signer/server_cert.pem \
+  -out ./iviaop/secrets/https/signer/server_cert.pem \
   -days 365 \
   -subj "/CN=iviaop/O=${NAMESPACE}"
 echo "    -> ./iviaop/secrets/https/personal/server_key.pem"
@@ -66,7 +68,7 @@ echo "==> Generating IVD LDAPS TLS certificate..."
 mkdir -p ./ivd
 openssl req -x509 -newkey rsa:2048 -nodes \
   -keyout ./ivd/server_key.pem \
-  -out    ./ivd/server_cert.pem \
+  -out ./ivd/server_cert.pem \
   -days 365 \
   -subj "/CN=isvd.${NAMESPACE}.svc.cluster.local/O=${NAMESPACE}"
 cat ./ivd/server_key.pem ./ivd/server_cert.pem > ./ivd/server.pem

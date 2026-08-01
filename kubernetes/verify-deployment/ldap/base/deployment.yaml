@@ -64,19 +64,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ivd
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 636
-      name: ivd
-      targetPort: 9636
-  selector:
-    app: ivd
----
-apiVersion: v1
-kind: Service
-metadata:
   name: ivd-internal
 spec:
   ports:
