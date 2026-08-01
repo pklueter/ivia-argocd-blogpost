@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/${your-org}/verify-gitops
+    repoURL: https://github.com/${your-org}/verify-argocd
     path: kubernetes/apps
     targetRevision: HEAD
   destination:
