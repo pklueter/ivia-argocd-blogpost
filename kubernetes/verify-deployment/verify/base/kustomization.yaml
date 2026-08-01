@@ -2,9 +2,9 @@ resources:
   - service-account.yaml
 
   # Config Container
-  - config-container/pvc.yaml
-  - config-container/services.yaml
-  - config-container/deployment.yaml
+  - config/pvc.yaml
+  - config/services.yaml
+  - config/deployment.yaml
 
   # WRP
   - wrp/services.yaml
