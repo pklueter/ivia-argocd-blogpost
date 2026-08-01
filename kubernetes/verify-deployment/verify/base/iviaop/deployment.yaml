@@ -1,0 +1,67 @@
+---
+# Deployment for OIDC Provider
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iviaop
+  labels:
+    app: iviaop
+spec:
+  selector:
+    matchLabels:
+      app: iviaop
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: iviaop
+    spec:
+      serviceAccountName: iviaop
+      volumes:
+        - name: iviaop-config-volume
+          projected:
+            sources:
+              - configMap:
+                  name: op-config
+              - configMap:
+                  name: op-mapping-rules
+              - configMap:
+                  name: op-access-policies
+              - configMap:
+                  name: op-templates
+              - configMap:
+                  name: oidc-clients
+              - configMap:
+                  name: op-clients
+              - configMap:
+                  name: mr-stage-config
+              - configMap:
+                  name: ap-stage-config
+      containers:
+        - name: iviaop
+          image: icr.io/ivia/ivia-oidc-provider:26.03
+          ports:
+            - containerPort: 8432
+          volumeMounts:
+            - name: iviaop-config-volume
+              mountPath: /var/iviaop/config
+          readinessProbe:
+            httpGet:
+              path: /healthcheck/ready
+              port: 8436
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 2
+          livenessProbe:
+            httpGet:
+              path: /healthcheck/alive
+              port: 8436
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 10

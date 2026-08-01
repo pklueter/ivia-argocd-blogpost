@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ibm-verify
+spec:
+  project: default
+  revisionHistoryLimit: 2
+  source:
+    repoURL: https://github.com/${your-org}/verify-gitops
+    path: kubernetes/verify-deployment/verify/overlays/dev
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: verify
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

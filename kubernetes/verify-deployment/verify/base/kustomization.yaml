@@ -1,0 +1,27 @@
+resources:
+  - service-account.yaml
+
+  # Config Container
+  - config-container/pvc.yaml
+  - config-container/services.yaml
+  - config-container/deployment.yaml
+
+  # WRP
+  - wrp/services.yaml
+  - wrp/deployment.yaml
+
+  # Runtime
+  - runtime/services.yaml
+  - runtime/deployment.yaml
+
+  # DSC
+  - dsc/services.yaml
+  - dsc/deployment.yaml
+
+  # IVIAOP
+  - iviaop/services.yaml
+  - iviaop/deployment.yaml
+  - iviaop/config/op-config.yaml
+  - iviaop/config/op-mr.yaml
+  - iviaop/config/op-ap.yaml
+  - iviaop/config/op-templates.yaml

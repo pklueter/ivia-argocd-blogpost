@@ -1,0 +1,74 @@
+---
+# Deployment for IVIA Runtime
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iviaruntime
+  labels:
+    app: iviaruntime
+spec:
+  selector:
+    matchLabels:
+      app: iviaruntime
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: iviaruntime
+    spec:
+      volumes:
+        - name: iviaconfig
+          emptyDir: {}
+        - name: iviaruntime-logs
+          emptyDir: {}
+      containers:
+        - name: iviaruntime
+          image: icr.io/ivia/ivia-runtime:11.0.3.0
+          ports:
+            - containerPort: 9443
+          volumeMounts:
+            - mountPath: /var/shared
+              name: iviaconfig
+            - mountPath: /var/application.logs
+              name: iviaruntime-logs
+          env:
+            - name: CONTAINER_TIMEZONE
+              value: Europe/London
+            - name: WLP_LOGGING_CONSOLE_SOURCE
+              value: message,trace,audit
+            - name: WLP_LOGGING_CONSOLE_LOGLEVEL
+              value: INFO
+            - name: CONFIG_SERVICE_URL
+              value: https://iviaconfig:443/shared_volume
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+          livenessProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+                - livenessProbe
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              scheme: HTTPS
+              port: 9443
+              path: /sps/static/ibm-logo.png
+            periodSeconds: 10
+            failureThreshold: 2
+            timeoutSeconds: 2
+          startupProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+            failureThreshold: 30
+            periodSeconds: 10
+            timeoutSeconds: 2

@@ -1,0 +1,113 @@
+##########
+# CONFIG #
+##########
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: iviaconfig-tls
+spec:
+  secretName: iviaconfig-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - lmi.yourdomain.com
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: insecure-skip-verify
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: iviaconfig
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`lmi.yourdomain.com`)
+      kind: Rule
+      services:
+        - name: iviaconfig
+          port: 443
+          scheme: https
+          serversTransport: insecure-skip-verify
+  tls:
+    secretName: iviaconfig-tls
+
+
+#######
+# WRP #
+#######
+--- # RP1
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wrp-rp01
+  annotations:
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+spec:
+  tls:
+    - hosts:
+        - www.yourdomain.com
+      secretName: wrp-rp01-tls
+  rules:
+    - host: www.yourdomain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wrp-rp01
+                port:
+                  number: 9080
+--- # API
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wrp-api
+  annotations:
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+spec:
+  tls:
+    - hosts:
+        - api.yourdomain.com
+      secretName: wrp-api-tls
+  rules:
+    - host: api.yourdomain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wrp-api
+                port:
+                  number: 9080
+--- # OIDCRP
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wrp-oidcrp
+  annotations:
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+spec:
+  tls:
+    - hosts:
+        - rp.yourdomain.com
+      secretName: wrp-oidcrp-tls
+  rules:
+    - host: rp.yourdomain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wrp-oidcrp
+                port:
+                  number: 9080

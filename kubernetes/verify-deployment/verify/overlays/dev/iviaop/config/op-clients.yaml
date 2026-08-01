@@ -1,0 +1,53 @@
+apiVersion: v1
+data:
+  ivia-client.yml: |
+    client_name: IVIA Client
+    client_id: ivia-client
+    client_secret: "changeme"
+    enabled: true
+    token_endpoint_auth_method: default
+  client1.yml: |
+    client_id: client1
+    client_secret: "changeme"
+    client_name: Client 1
+    enabled: true
+    grant_types:
+      - authorization_code
+      - urn:openid:params
+    response_types:
+      - code
+    redirect_uris:
+      - https://rp.yourdomain.com/callback
+    token_endpoint_auth_method: default
+  client2.yml: |
+    client_id: oidcrp
+    client_secret: "changeme"
+    client_name: OIDC-RP
+    enabled: true
+    grant_types:
+      - authorization_code
+      - urn:openid:params
+    response_types:
+      - code
+    redirect_uris:
+      - https://rp.yourdomain.com/login
+    token_endpoint_auth_method: default
+  am-ui.yml: |
+    client_name: AM UI
+    client_id: am-ui
+    client_secret: "changeme"
+    enabled: true
+    grant_types:
+      - authorization_code
+      - urn:openid:params
+      - implicit
+    response_types:
+      - code
+      - token id_token
+    redirect_uris:
+      - https://ui.yourdomain.com/api/auth/callback/ivia
+      - http://localhost:3000/api/auth/callback/ivia
+    token_endpoint_auth_method: default
+kind: ConfigMap
+metadata:
+  name: op-clients

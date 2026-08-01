@@ -1,0 +1,65 @@
+---
+# Deployment for Distributed Session Cache (DSC)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iviadsc
+  labels:
+    app: iviadsc
+spec:
+  selector:
+    matchLabels:
+      app: iviadsc
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: iviadsc
+    spec:
+      volumes:
+        - name: iviaconfig
+          emptyDir: {}
+        - name: iviadsc-logs
+          emptyDir: {}
+      containers:
+        - name: iviadsc
+          image: icr.io/ivia/ivia-dsc:11.0.3.0
+          ports:
+            - containerPort: 9443
+            - containerPort: 9444
+          volumeMounts:
+            - mountPath: /var/shared
+              name: iviaconfig
+            - mountPath: /var/application.logs
+              name: iviadsc-logs
+          env:
+            - name: INSTANCE
+              value: '1'
+            - name: CONTAINER_TIMEZONE
+              value: Europe/London
+            - name: CONFIG_SERVICE_URL
+              value: https://iviaconfig:443/shared_volume
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+          livenessProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+                - livenessProbe
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2

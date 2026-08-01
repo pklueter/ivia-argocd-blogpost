@@ -1,0 +1,6 @@
+resources:
+  - service-account.yaml
+  - ivd-config.yaml
+  - schema.yaml
+  - volume-claim.yaml
+  - deployment.yaml

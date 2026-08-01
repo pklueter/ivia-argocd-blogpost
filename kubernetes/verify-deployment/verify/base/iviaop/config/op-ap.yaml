@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  default.js: |
+    importClass(Packages.com.tivoli.am.fim.trustserver.sts.utilities.IDMappingExtUtils);
+    importMappingRule("config");
+
+    IDMappingExtUtils.traceString(hostname);
+
+    context.setDecision(Decision.allow());
+kind: ConfigMap
+metadata:
+  name: op-access-policies

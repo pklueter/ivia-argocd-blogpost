@@ -1,0 +1,168 @@
+---
+# Deployment for Web Reverse Proxy instance rp01
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wrp01
+  labels:
+    app: wrp01
+spec:
+  selector:
+    matchLabels:
+      app: wrp01
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wrp01
+    spec:
+      volumes:
+        - name: iviaconfig
+          emptyDir: {}
+        - name: wrp01-logs
+          emptyDir: {}
+      containers:
+        - name: wrp01
+          image: icr.io/ivia/ivia-wrp:11.0.3.0
+          ports:
+            - containerPort: 9080
+          volumeMounts:
+            - mountPath: /var/shared
+              name: iviaconfig
+            - mountPath: /var/application.logs
+              name: wrp01-logs
+          env:
+            - name: INSTANCE
+              value: rp01
+            - name: CONTAINER_TIMEZONE
+              value: Europe/London
+            - name: LOG_TO_CONSOLE
+              value: requests
+            - name: CONFIG_SERVICE_URL
+              value: https://iviaconfig:443/shared_volume
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+
+---
+# Deployment for Web Reverse Proxy instance OIDC RP
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wrp02
+  labels:
+    app: wrp02
+spec:
+  selector:
+    matchLabels:
+      app: wrp02
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wrp02
+    spec:
+      volumes:
+        - name: iviaconfig
+          emptyDir: {}
+        - name: wrp02-logs
+          emptyDir: {}
+      containers:
+        - name: wrp02
+          image: icr.io/ivia/ivia-wrp:11.0.3.0
+          ports:
+            - containerPort: 9080
+          volumeMounts:
+            - mountPath: /var/shared
+              name: iviaconfig
+            - mountPath: /var/application.logs
+              name: wrp02-logs
+          env:
+            - name: INSTANCE
+              value: oidcRP
+            - name: CONTAINER_TIMEZONE
+              value: Europe/London
+            - name: CONFIG_SERVICE_URL
+              value: https://iviaconfig:443/shared_volume
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+          livenessProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+                - livenessProbe
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 2
+          readinessProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2
+
+---
+# Deployment for Web Reverse Proxy instance api
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wrp03
+  labels:
+    app: wrp03
+spec:
+  selector:
+    matchLabels:
+      app: wrp03
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: wrp03
+    spec:
+      volumes:
+        - name: iviaconfig
+          emptyDir: {}
+        - name: wrp03-logs
+          emptyDir: {}
+      containers:
+        - name: wrp03
+          image: icr.io/ivia/ivia-wrp:11.0.3.0
+          ports:
+            - containerPort: 9080
+          volumeMounts:
+            - mountPath: /var/shared
+              name: iviaconfig
+            - mountPath: /var/application.logs
+              name: wrp03-logs
+          env:
+            - name: INSTANCE
+              value: api
+            - name: CONTAINER_TIMEZONE
+              value: Europe/London
+            - name: LOG_TO_CONSOLE
+              value: requests
+            - name: CONFIG_SERVICE_URL
+              value: https://iviaconfig:443/shared_volume
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw

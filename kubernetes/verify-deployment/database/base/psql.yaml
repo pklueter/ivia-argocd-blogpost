@@ -1,0 +1,86 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: max-conns
+data:
+  max_conns.sql: 'ALTER SYSTEM SET max_connections = 1000;'
+--- # PSQL Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  ports:
+    - port: 5432
+      name: db
+      protocol: TCP
+  selector:
+    app: postgresql
+
+---
+# Deployment for postgres
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+  labels:
+    app: postgresql
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      volumes:
+        - name: postgresqldata
+          persistentVolumeClaim:
+            claimName: postgresqldata
+        - name: postgresql-keys
+          secret:
+            secretName: postgresql-keys
+        - name: max-conns
+          configMap:
+            name: max-conns
+      containers:
+        - name: postgresql
+          image: icr.io/ivia/ivia-postgresql:11.0.3.0
+          livenessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            tcpSocket:
+              port: 5432
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-keys
+                  key: password
+            - name: POSTGRES_DB
+              value: ivia
+            - name: POSTGRES_SSL_KEYDB
+              value: /var/local/server.crt
+            - name: PGDATA
+              value: /var/lib/postgresql/data/db-files/
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgresqldata
+            - mountPath: /var/local
+              name: postgresql-keys
+            - name: max-conns
+              mountPath: /docker-entrypoint-initdb.d/max_conns.sql
+              subPath: max_conns.sql

@@ -1,0 +1,12 @@
+client_id: client1 # Client identifier
+client_secret: 'secret:clients/client1'
+client_name: Client 1 # Name of the client.
+enabled: true # Set to `true` to enable this client
+grant_types: # Grant type that the client is allowed to use at the token endpoint.
+  - authorization_code
+  - urn:openid:params
+response_types: # Response type that the client is allowed to use at the authorization endpoint.
+  - code
+redirect_uris: # Redirection URI strings for use in redirect-based flows such as the authorization code and implicit flows.
+  - https://client1.yourdomain.com
+token_endpoint_auth_method: default # Requested authentication method for the backend endpoints (token, introspect, revoke).

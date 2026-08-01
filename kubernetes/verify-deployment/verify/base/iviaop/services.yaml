@@ -1,0 +1,12 @@
+--- # OIDC OP
+apiVersion: v1
+kind: Service
+metadata:
+  name: iviaop
+spec:
+  ports:
+    - port: 8432
+      name: iviaop
+      protocol: TCP
+  selector:
+    app: iviaop

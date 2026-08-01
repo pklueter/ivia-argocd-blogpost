@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ldap-schemas
+data:
+  am-user.at: |
+    # Custom attribute for user active status
+    attributeTypes {
+      ( 1.3.6.1.4.1.99999.1.1
+        NAME 'active'
+        DESC 'Indicates if the user is active'
+        EQUALITY booleanMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+        SINGLE-VALUE
+      )
+      ( 1.3.6.1.4.1.99999.1.2
+        NAME 'totp-active'
+        DESC 'Indicates if the user has totp activated'
+        EQUALITY booleanMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+        SINGLE-VALUE
+      )
+      ( 1.3.6.1.4.1.99999.1.3
+        NAME 'mail-otp-active'
+        DESC 'Indicates if the user has mail otp activated'
+        EQUALITY booleanMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+        SINGLE-VALUE
+      )
+      ( 1.3.6.1.4.1.99999.1.4
+        NAME 'phototan-active'
+        DESC 'Indicates if the user has phototan activated'
+        EQUALITY booleanMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+        SINGLE-VALUE
+      )
+      ( 1.3.6.1.4.1.99999.1.5
+        NAME 'passwordChangeRequired'
+        DESC 'Indicates if a password change is required'
+        EQUALITY booleanMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.7
+        SINGLE-VALUE
+      )
+    }
+  am-user.oc: |
+    # Custom objectclass for am-managed users
+    objectClasses {
+     ( 1.3.6.1.4.1.99999.2.1
+        NAME 'am-user'
+        DESC 'Application Managed User'
+        SUP inetOrgPerson
+        STRUCTURAL
+        MAY ( active $ mail-otp-active $ totp-active $ phototan-active $ passwordChangeRequired)
+      )
+    }

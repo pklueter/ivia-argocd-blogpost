@@ -1,0 +1,13 @@
+client_id: oidcrp # Client identifier
+client_secret: 'secret:clients/client2' # xNQd0xzXNwI55M9w8KYq
+client_name: OIDC-RP # Name of the client.
+enabled: true # Set to `true` to enable this client
+grant_types: # Grant type that the client is allowed to use at the token endpoint.
+  - authorization_code
+  - urn:openid:params
+response_types: # Response type that the client is allowed to use at the authorization endpoint.
+  - token id_token
+  - code
+redirect_uris: # Redirection URI strings for use in redirect-based flows such as the authorization code and implicit flows.
+  - https://client2.yourdomain.com/login
+token_endpoint_auth_method: default # Requested authentication method for the backend endpoints (token, introspect, revoke).

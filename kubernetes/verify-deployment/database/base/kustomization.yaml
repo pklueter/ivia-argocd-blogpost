@@ -1,0 +1,3 @@
+resources:
+  - psql.yaml
+  - pvc.yaml

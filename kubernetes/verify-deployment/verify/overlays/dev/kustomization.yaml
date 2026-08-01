@@ -1,0 +1,8 @@
+resources:
+  - ../../base
+  - ingress.yaml
+  - iviaop/config/op.yaml
+  - iviaop/config/clients.yaml
+  - iviaop/config/op-clients.yaml
+  - iviaop/config/op-mr-stage-config.yaml
+  - iviaop/config/op-ap-stage-config.yaml

@@ -1,0 +1,11 @@
+rules:
+  mapping:
+    - name: opPreToken
+      content: "configmap:op-mapping-rules/opPreToken.js"
+    - name: config
+      content: "configmap:mr-stage-config/config.js"
+  access_policy:
+    - name: default_policy
+      content: "configmap:op-access-policies/default.js"
+    - name: config
+      content: "configmap:ap-stage-config/config.js"

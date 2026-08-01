@@ -1,0 +1,17 @@
+runtime_db: hvdb
+session_cache:
+  type: db
+server_connections:
+  - name: hvdb
+    type: postgresql
+    database_name: ivia
+    hosts:
+      - hostname: 'configmap:op/db_host'
+        hostport: 5432
+    credential:
+      username: postgres
+      password: 'secret:op/db_password'
+    ssl:
+      certificate:
+        - ks:postgres_keys
+      disable_hostname_verification: true

@@ -1,0 +1,12 @@
+--- # Runtime
+apiVersion: v1
+kind: Service
+metadata:
+  name: iviaruntime
+spec:
+  ports:
+    - port: 9443
+      name: iviaruntime
+      protocol: TCP
+  selector:
+    app: iviaruntime

@@ -1,0 +1,12 @@
+server_connections:
+  - name: isvd-am
+    type: ldap
+    hosts:
+      - hostname: configmap:op/ldap_host
+        hostport: 389
+        credential:
+          bind_dn: uid=ivia-bind,ou=users,ou=admin,dc=ivia.dev
+          bind_password: 'secret:op/ldap_password'
+    conn_settings:
+      max_pool_size: 50
+      connect_timeout: 3

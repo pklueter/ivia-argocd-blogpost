@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ldap
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/${your-org}/verify-gitops
+    path: kubernetes/verify-deployment/ldap/overlays/dev
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: verify
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,175 @@
+apiVersion: v1
+data:
+  iviaop.yml: |
+    version: 26.03
+    server:
+      activation_code: "your-activation-code"
+      ssl:
+        key: "ks:server_keys/server_key"
+        certificate: "ks:server_keys/server_cert"
+      pages:
+        type: zip
+        content: "configmap:op-templates/templates.zip"
+    logging:
+      level: info
+  keystore.yml: |
+    keystore:
+      - name: op_signing
+        type: pem
+        key:
+          - label: rsakey
+            content: "secret:op-keystores/jwtsigningkey.pem"
+      - name: server_keys
+        type: zip
+        content: "secret:op-keystores/https.zip"
+      - name: postgres_keys
+        type: pem
+        certificate:
+          - label: psql
+            content: "secret:op-keystores/server.pem"
+  ldap.yml: |
+    attribute_sources:
+      - id: 1
+        name: name
+        type: ldap
+        value: cn
+        scope: subtree
+        filter: (uid={uid})
+        selector: cn,sn,givenName,mail,displayName
+        srv_conn: isvd-am
+        baseDN: ou=users,dc=ivia.dev
+      - id: 2
+        name: family_name
+        type: ldap
+        value: sn
+        scope: subtree
+        filter: (uid={uid})
+        selector: cn,sn,givenName,mail,displayName
+        srv_conn: isvd-am
+        baseDN: ou=users,dc=ivia.dev
+      - id: 3
+        name: given_name
+        type: ldap
+        value: givenName
+        scope: subtree
+        filter: (uid={uid})
+        selector: cn,sn,givenName,mail,displayName
+        srv_conn: isvd-am
+        baseDN: ou=users,dc=ivia.dev
+      - id: 4
+        name: email
+        type: ldap
+        value: mail
+        scope: subtree
+        filter: (uid={uid})
+        selector: cn,sn,givenName,mail,displayName
+        srv_conn: isvd-am
+        baseDN: ou=users,dc=ivia.dev
+      - id: 5
+        name: preferred_username
+        type: ldap
+        value: displayName
+        scope: subtree
+        filter: (uid={uid})
+        selector: cn,sn,givenName,mail,displayName
+        srv_conn: isvd-am
+        baseDN: ou=users,dc=ivia.dev
+      - id: 6
+        name: groups
+        type: credential
+        value: AZN_CRED_GROUPS
+      - id: 7
+        name: group_registry_ids
+        type: credential
+        value: AZN_CRED_GROUP_REGISTRY_IDS
+    ldapcfg:
+      - name: isvd-am
+        scope: subtree
+        user_object_classes: top,Person,organizationalPerson,inetOrgPerson
+        filter: (|(|(objectclass=ePerson)(objectclass=person))(objectclass=User))
+        selector: objectClass,cn,sn,givenName,mail,userPassword
+        srv_conn: isvd-am
+        attribute: uid
+        baseDN: ou=users,dc=ivia.dev
+  oidc.yml: |
+    definition:
+      id: 1
+      name: OIDC Definition
+      grant_types:
+        - authorization_code
+        - implicit
+        - password
+        - client_credentials
+        - refresh_token
+        - urn:openid:params:grant-type:ciba
+        - urn:ietf:params:oauth:grant-type:token-exchange
+        - urn:ietf:params:oauth:grant-type:jwt-bearer
+        - urn:ietf:params:oauth:grant-type:device_code
+        - urn:ietf:params:oauth:grant-type:pre-authorized_code
+      base_url: "configmap:op/base_url"
+      access_policy_id: default_policy
+      token_settings:
+        issuer: "configmap:op/issuer"
+        signing_alg: RS256
+        signing_keystore: op_signing
+        signing_keylabel: rsakey
+        access_token_type: jwt
+      features:
+        consent_prompt: NEVER_PROMPT
+      attribute_map:
+        name: name
+        family_name: family_name
+        given_name: given_name
+        preferred_username: preferred_username
+        email: email
+        groups: groups
+        group_registry_ids: group_registry_ids
+      pre_mappingrule_id: opPreToken
+    jwks:
+      signing_keystore: op_signing
+  rules.yml: |
+    rules:
+      mapping:
+        - name: opPreToken
+          content: "configmap:op-mapping-rules/opPreToken.js"
+        - name: config
+          content: "configmap:mr-stage-config/config.js"
+      access_policy:
+        - name: default_policy
+          content: "configmap:op-access-policies/default.js"
+        - name: config
+          content: "configmap:ap-stage-config/config.js"
+  runtimedb.yml: |
+    runtime_db: hvdb
+    session_cache:
+      type: db
+    server_connections:
+      - name: hvdb
+        type: postgresql
+        database_name: ivia
+        hosts:
+          - hostname: "configmap:op/db_host"
+            hostport: 5432
+        credential:
+          username: postgres
+          password: "secret:op/db_password"
+        ssl:
+          certificate:
+            - ks:postgres_keys
+          disable_hostname_verification: true
+  server_connections.yml: |
+    server_connections:
+      - name: isvd-am
+        type: ldap
+        hosts:
+          - hostname: configmap:op/ldap_host
+            hostport: 389
+            credential:
+              bind_dn: uid=ivia-bind,ou=users,ou=admin,dc=ivia.dev
+              bind_password: "secret:op/ldap_password"
+        conn_settings:
+          max_pool_size: 50
+          connect_timeout: 3
+kind: ConfigMap
+metadata:
+  name: op-config

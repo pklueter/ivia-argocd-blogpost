@@ -1,0 +1,39 @@
+--- # RP1
+apiVersion: v1
+kind: Service
+metadata:
+  name: wrp01
+spec:
+  sessionAffinity: ClientIP
+  ports:
+    - port: 9080
+      name: wrp01
+      protocol: TCP
+  selector:
+    app: wrp01
+--- # OIDCRP
+apiVersion: v1
+kind: Service
+metadata:
+  name: wrp02
+spec:
+  sessionAffinity: ClientIP
+  ports:
+    - port: 9080
+      name: wrp02
+      protocol: TCP
+  selector:
+    app: wrp02
+--- # API
+apiVersion: v1
+kind: Service
+metadata:
+  name: wrp03
+spec:
+  sessionAffinity: ClientIP
+  ports:
+    - port: 9080
+      name: wrp03
+      protocol: TCP
+  selector:
+    app: wrp03

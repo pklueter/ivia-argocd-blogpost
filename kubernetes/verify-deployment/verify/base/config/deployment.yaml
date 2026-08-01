@@ -1,0 +1,82 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iviaconfig
+  labels:
+    app: iviaconfig
+spec:
+  selector:
+    matchLabels:
+      app: iviaconfig
+  replicas: 1
+  strategy:
+    type: Recreate
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      labels:
+        app: iviaconfig
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 6000
+      volumes:
+        - name: iviaconfig
+          persistentVolumeClaim:
+            claimName: iviaconfig
+        - name: iviaconfig-logs
+          emptyDir: {}
+      containers:
+        - name: iviaconfig
+          image: icr.io/ivia/ivia-config:11.0.3.0
+          volumeMounts:
+            - mountPath: /var/shared
+              name: iviaconfig
+            - mountPath: /var/application.logs
+              name: iviaconfig-logs
+          env:
+            - name: CONTAINER_TIMEZONE
+              value: Europe/London
+            - name: LOG_TO_CONSOLE
+              value: policy.server
+            - name: ADMIN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: iviaadmin
+                  key: adminpw
+            - name: ADMIN_PWD_MODE
+              value: FIXED
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+          livenessProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+                - livenessProbe
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+            initialDelaySeconds: 5
+            timeoutSeconds: 5
+            periodSeconds: 10
+          startupProbe:
+            exec:
+              command:
+                - /sbin/health_check.sh
+                - startupProbe
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30

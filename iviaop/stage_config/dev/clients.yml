@@ -1,0 +1,3 @@
+clients:
+  - 'configmap:op-clients/client1.yml'
+  - 'configmap:op-clients/client2.yml'

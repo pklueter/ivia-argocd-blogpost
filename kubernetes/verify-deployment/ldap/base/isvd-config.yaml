@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ivd-server-config
+data:
+  config.yaml: |
+    general:
+      ports:
+        ldap: 9389
+        ldaps: 9636
+      id: 'am-directory'
+      license:
+        key: 'secret:ivd-license-key/ivd-10.0.0_license_key_limited.txt'
+        accept: standard
+      admin:
+        dn: cn=root
+        pwd: 'secret:ivd-passwords/admin'
+      ssl:
+        auth: ServerAuth
+        cert-label: server
+      schemas:
+        - /volume/schemas/am-user.at
+        - /volume/schemas/am-user.oc
+    server:
+      suffixes:
+        - dn: dc=ivia.dev
+        - dn: secAuthority=Default
+      change-log:
+        enabled: true
+        max-days: 56
+        max-entries: 99999
+        max-hours: 12
+    keyfile:
+      keys:
+        - key: 'secret:ivd-server-keys/server.pem'
+          label: server
