@@ -1,5 +1,5 @@
 ---
-# Deployment for Web Reverse Proxy instance rp01
+# Deployment for Web Reverse Proxy instance wrp01
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -51,7 +51,7 @@ spec:
                   key: cfgsvcpw
 
 ---
-# Deployment for Web Reverse Proxy instance OIDC RP
+# Deployment for Web Reverse Proxy instance wrp02
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -116,7 +116,7 @@ spec:
             failureThreshold: 2
 
 ---
-# Deployment for Web Reverse Proxy instance api
+# Deployment for Web Reverse Proxy instance wrp03
 apiVersion: apps/v1
 kind: Deployment
 metadata:

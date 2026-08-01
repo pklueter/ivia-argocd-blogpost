@@ -46,14 +46,14 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: wrp-rp01
+  name: wrp01
   annotations:
     cert-manager.io/cluster-issuer: 'letsencrypt-prod'
 spec:
   tls:
     - hosts:
         - www.yourdomain.com
-      secretName: wrp-rp01-tls
+      secretName: wrp01-tls
   rules:
     - host: www.yourdomain.com
       http:
@@ -62,21 +62,21 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: wrp-rp01
+                name: wrp01
                 port:
                   number: 9080
 --- # API
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: wrp-api
+  name: wrp02
   annotations:
     cert-manager.io/cluster-issuer: 'letsencrypt-prod'
 spec:
   tls:
     - hosts:
         - api.yourdomain.com
-      secretName: wrp-api-tls
+      secretName: wrp02-tls
   rules:
     - host: api.yourdomain.com
       http:
@@ -85,21 +85,21 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: wrp-api
+                name: wrp02
                 port:
                   number: 9080
 --- # OIDCRP
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: wrp-oidcrp
+  name: wrp03
   annotations:
     cert-manager.io/cluster-issuer: 'letsencrypt-prod'
 spec:
   tls:
     - hosts:
         - rp.yourdomain.com
-      secretName: wrp-oidcrp-tls
+      secretName: wrp03-tls
   rules:
     - host: rp.yourdomain.com
       http:
@@ -108,6 +108,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: wrp-oidcrp
+                name: wrp03
                 port:
                   number: 9080
