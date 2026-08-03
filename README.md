@@ -1,6 +1,6 @@
 # IBM Verify Identity Access — ArgoCD Deployment
 
-Beispielrepository zum Blog Post: [IBM Verify Identity Access mit ArgoCD auf Kubernetes deployen](https://pklueter.dev/blog/ivia-argocd-deployment)
+Beispielrepository zum Blog Post: [IBM Verify Identity Access mit ArgoCD auf Kubernetes deployen](https://blog.klueter.dev/blog/en/ivia-argocd-deployment/)
 
 ## Struktur
 
@@ -43,20 +43,22 @@ Beispielrepository zum Blog Post: [IBM Verify Identity Access mit ArgoCD auf Kub
 ## Quickstart
 
 ```bash
-# 1. .env anlegen und Werte eintragen
+# 1. Domains in den Konfigurationsdateien anpassen (kubernetes/**/*.yaml, apps/*.yml)
+
+# 2. .env anlegen und Werte eintragen
 cp scripts/env.example .env
 
-# 2. TLS-Zertifikate und Schlüssel generieren
+# 3. TLS-Zertifikate und Schlüssel generieren
 bash scripts/01-generate-certs.sh
 
-# 3. Kubernetes Secrets anlegen
+# 4. Kubernetes Secrets anlegen
 bash scripts/02-create-secrets.sh
 
-# 4. OIDC Provider ConfigMaps generieren und committen
+# 5. OIDC Provider ConfigMaps generieren und committen
 bash scripts/03-generate-configmaps.sh
-git add kubernetes/ && git commit -m "chore: generate configmaps" && git push
+git add kubernetes/ && git commit -m "Generate configmaps" && git push
 
-# 5. Repository URL in apps.yaml und apps/*.yml anpassen, dann deployen
+# 6. Repository URL in apps.yaml und apps/*.yml anpassen, dann deployen
 kubectl apply -f kubernetes/apps.yaml
 ```
 
@@ -105,10 +107,3 @@ kubectl create configmap ap-stage-config \
   --from-file="./iviaop/stage_config/${STAGE}/access_policies" \
   --dry-run=client -o yaml > "${stage_output_dir}/op-ap-stage-config.yaml"
 ```
-
-## Anpassungen gegenüber der Originalumgebung
-
-- Ordnernamen angepasst (`am-lab/am` → `verify-deployment/verify`, `am-lab/psql` → `verify-deployment/database`)
-- LDAP auf Kustomize-Basis umgestellt (inkl. `base/` und `overlays/`)
-- Secrets entfernt (Passwörter als `"changeme"` Platzhalter)
-- `am-config` in `verify-deployment/verify` integriert

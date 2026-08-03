@@ -1,9 +1,3 @@
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: max-conns
-data:
-  max_conns.sql: 'ALTER SYSTEM SET max_connections = 1000;'
 --- # PSQL Service
 apiVersion: v1
 kind: Service
@@ -44,9 +38,6 @@ spec:
         - name: postgresql-keys
           secret:
             secretName: postgresql-keys
-        - name: max-conns
-          configMap:
-            name: max-conns
       containers:
         - name: postgresql
           image: icr.io/ivia/ivia-postgresql:11.0.3.0
@@ -81,6 +72,3 @@ spec:
               name: postgresqldata
             - mountPath: /var/local
               name: postgresql-keys
-            - name: max-conns
-              mountPath: /docker-entrypoint-initdb.d/max_conns.sql
-              subPath: max_conns.sql
